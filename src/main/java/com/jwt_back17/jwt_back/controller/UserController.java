@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jwt_back17.jwt_back.dto.LoginDto;
 import com.jwt_back17.jwt_back.dto.RegisterDto;
+import com.jwt_back17.jwt_back.entity.BlackListTokenEntity;
 import com.jwt_back17.jwt_back.entity.UserEntity;
+import com.jwt_back17.jwt_back.repository.BlackListTokenRepository;
 import com.jwt_back17.jwt_back.repository.UserRepository;
 import com.jwt_back17.security.JwtFilter;
 import com.jwt_back17.security.JwtGenerator;
@@ -27,6 +29,9 @@ public class UserController {
 
   @Autowired
   JwtFilter jwtFilter;
+
+  @Autowired
+  BlackListTokenRepository blacklistRepository;
 
   // Ici méthode passwordEncoder rendu visible pour spring boot dans le fichier
   // Config.java grâce à l'annotation @Bean
@@ -100,9 +105,14 @@ public class UserController {
     return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
   }
 
-  @PostMapping("logout")
+  @PostMapping("customlogout")
   public ResponseEntity<?> logout(@RequestHeader("Authorization") String bearerToken) {
     // Obtenir le token depuis la requête http
+    System.out.println("@@@@@@@@ " + bearerToken);
+    String token = jwtFilter.getTokenString(bearerToken);
+    BlackListTokenEntity tokenToBlackList = new BlackListTokenEntity();
+    tokenToBlackList.setToken(token);
+    blacklistRepository.save(tokenToBlackList);
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("message", "logout réussie");
     return new ResponseEntity<>(map, HttpStatus.OK);
