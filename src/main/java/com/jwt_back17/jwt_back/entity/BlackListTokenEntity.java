@@ -13,6 +13,7 @@ public class BlackListTokenEntity {
    * Tant que la date d'expiration n'est pas dépassé
    * Et en cas d'alerte l'utilisateur ou le sytème peut invalider un token jsute
    * en se déconnectant
+   * https://dev.to/chukwutosin_/how-to-invalidate-a-jwt-using-a-blacklist-28dl
    */
 
   @Id

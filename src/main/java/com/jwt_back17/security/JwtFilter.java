@@ -48,7 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
       }
     } catch (Exception e) {
-      // T-755 Auto-generated catch block
       e.printStackTrace();
     }
     // Nous permet d'aller au prochain élément de la chaîne, un autre filter chaîne
