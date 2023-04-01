@@ -2,15 +2,27 @@ package com.jwt_back17.security;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 
 @Configuration
 @EnableWebSecurity
 public class Config {
+
+  @Autowired
+  JwtEntryPoint jwtEntryPoint;
+
+  @Autowired
+  JwtFilter jwtFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,8 +51,30 @@ public class Config {
      * GET http://bank.com/transfer?accountNo=5678&amount=1000
      * Since we use the jwt token, we don't need the csrf token to be enabled so we
      * can disable it
+     * 
      */
-    http.cors().and().csrf().disable();
+
+    /**
+     * Une Session http sauvegarde des informations à propos d'un utilisateur
+     * (client login state, for example, plus whatever else the Web application
+     * needs to save)
+     * Si on laisse le session management actif alors qu'on a désactivé la
+     * protection CRSF on s'ouvre à des attaques CSRF
+     * d'ou la ligne 60 sessionManagement(session ->
+     * session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+     */
+    http.cors().and().csrf().disable()
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling()
+        .authenticationEntryPoint(jwtEntryPoint)
+        .and()
+        .authorizeRequests()
+        .antMatchers("/register", "/login").permitAll()
+        .anyRequest().authenticated();
+
+    http.logout().logoutSuccessUrl("/logoutSuccessfully");
+    // where to implement the middleware filter
+    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 

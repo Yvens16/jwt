@@ -2,10 +2,12 @@ package com.jwt_back17.security;
 
 import java.util.Date;
 
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.jwt_back17.jwt_back.dto.RegisterDto;
 
+import io.jsonwebtoken.Claims;
 /* 
 Voir pom.xml au niveau de 
 		<dependency>
@@ -29,7 +31,7 @@ public class JwtGenerator {
     String username = user.getUsername();
     Date currentDate = new Date();
     // 30000 30 seconds en millliseconds
-    Date expireDate = new Date(currentDate.getTime() + 30000);
+    Date expireDate = new Date(currentDate.getTime() + 30000000);
     // Implémentation à récupérer d'internet
     String token = Jwts.builder()
         .setSubject(username)
@@ -39,4 +41,22 @@ public class JwtGenerator {
         .compact();
     return token;
   }
+
+  public Boolean validateToken(String token) {
+    try {
+      Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
+      return true;
+    } catch(Exception err) {
+      throw new AuthenticationCredentialsNotFoundException("Le token n'est pas bon ou est expiré");
+    }
+  }
+
+  public String getUserNameFromToken(String token) {
+    Claims claims = Jwts.parser()
+    .setSigningKey("secret")
+    .parseClaimsJws(token)
+    .getBody();
+    return claims.getSubject();
+  }
+
 }
