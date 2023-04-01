@@ -69,7 +69,7 @@ public class Config {
         .authenticationEntryPoint(jwtEntryPoint)
         .and()
         .authorizeRequests()
-        .antMatchers("/register", "/login").permitAll()
+        .antMatchers("/register", "/login", "/customlogout").permitAll() // Les url libre d'accès sans token
         .anyRequest().authenticated();
 
     http.logout().logoutSuccessUrl("/logoutSuccessfully");

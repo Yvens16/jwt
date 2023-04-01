@@ -124,6 +124,7 @@ public class UserController {
     // C'est pour ça que l'on configure cette url pour l'instant dans le fichier Config.java 
     // Allez voir dans le fichier Config.java à cette ligne: "http.logout().logoutSuccessUrl("/logoutSuccessfully");"
     // On le remplacera sûrement par la dernière page visité ou une page prévu à cette effet
+    // Seulement si on utilise le l'url logout par défault;
     return new ResponseEntity<>("logoutSuccessfully", HttpStatus.OK);
   }
 
