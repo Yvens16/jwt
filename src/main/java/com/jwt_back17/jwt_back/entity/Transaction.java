@@ -17,6 +17,8 @@ public class Transaction {
   private Long amount;
 
   // DOUBLE ONE TO MANY
+  // https://stackoverflow.com/questions/67526700/com-fasterxml-jackson-databind-ser-std-collectionserializer-serializecollection
+  // Add JsonIgnore on the manyToOne side of the relationship
   @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "buyer_id")  
