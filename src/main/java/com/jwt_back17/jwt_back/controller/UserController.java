@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -42,8 +43,10 @@ public class UserController {
   UserRepository userRepository;
 
   @GetMapping("try")
-  public String getString() {
-    return "Heloo";
+  public ResponseEntity<?> getString() {
+    HashMap<String, String> map = new HashMap<String, String>();
+    map.put("message", "hello");
+    return new ResponseEntity<>(map, HttpStatus.OK);
   }
 
   @PostMapping("register")
@@ -120,12 +123,22 @@ public class UserController {
 
   @GetMapping("logoutSuccessfully")
   public ResponseEntity<String> logoutSuccessfully() {
-    // Par défault spring security cherche un url où renvoyer l'utilisateur en cas de logout
-    // C'est pour ça que l'on configure cette url pour l'instant dans le fichier Config.java 
-    // Allez voir dans le fichier Config.java à cette ligne: "http.logout().logoutSuccessUrl("/logoutSuccessfully");"
-    // On le remplacera sûrement par la dernière page visité ou une page prévu à cette effet
+    // Par défault spring security cherche un url où renvoyer l'utilisateur en cas
+    // de logout
+    // C'est pour ça que l'on configure cette url pour l'instant dans le fichier
+    // Config.java
+    // Allez voir dans le fichier Config.java à cette ligne:
+    // "http.logout().logoutSuccessUrl("/logoutSuccessfully");"
+    // On le remplacera sûrement par la dernière page visité ou une page prévu à
+    // cette effet
     // Seulement si on utilise le l'url logout par défault;
     return new ResponseEntity<>("logoutSuccessfully", HttpStatus.OK);
   }
+
+  @GetMapping("user/{id}")
+  public UserEntity getUserById(@PathVariable Long id) {
+    return userRepository.findById(id).get();
+  }
+
 
 }

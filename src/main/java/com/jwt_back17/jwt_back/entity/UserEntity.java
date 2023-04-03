@@ -1,9 +1,37 @@
 package com.jwt_back17.jwt_back.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+
+/**
+ * 
+ * @Entity
+public class User {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private String name;
+  private String email;
+
+  @OneToMany(mappedBy = "buyer")
+  private List<Transaction> boughtTransactions;
+
+  @OneToMany(mappedBy = "seller")
+  private List<Transaction> soldTransactions;
+
+  // getters and setters
+}
+ */
+
 
 @Entity
 public class UserEntity {
@@ -16,7 +44,12 @@ public class UserEntity {
   private String email;
   private String password;
   private String role;
+  
+  @OneToMany(mappedBy = "buyer")
+  private List<Transaction> boughtTransactions;
 
+  @OneToMany(mappedBy = "seller")
+  private List<Transaction> soldTransactions;
   public UserEntity() {}
 
   public long getId() {
@@ -57,5 +90,13 @@ public class UserEntity {
 
   public void setRole(String role) {
     this.role = role;
+  }
+
+  public List<Transaction> getBoughtTransactions() {
+    return boughtTransactions;
+  }
+
+  public List<Transaction> getSoldTransactions() {
+    return soldTransactions;
   }
 }
