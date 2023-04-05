@@ -34,8 +34,13 @@ public class CustomUserDetails implements UserDetailsService {
     if (user == null) {
       throw new UsernameNotFoundException("J'ai pas trouvé le username pourtant j'ai essayé hein 🥵");
     }
+
+    // ADD_ROLE_TO_USER_AND_TOKEN
+    // Ici, je fais une version simple en passant un string, à vous d'adapter selon
+    // comment vous avez gérer vos rôle en base de données
     Collection<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();
     roles.add(new SimpleGrantedAuthority("USER"));
+    roles.add(new SimpleGrantedAuthority("ADMIN"));
     
     return new User(user.getUsername(), user.getPassword(), roles);
   }
