@@ -1,8 +1,8 @@
 INSERT INTO
-  user_entity (username, email, password, role)
+  user_entity (username, email, password)
 VALUES
-  ('yvens', 'yv@gmail.com', "1234", "user"),
-  ('Cédric', 'cedric@gmail.com', "1234", "user"),
-  ('momo', 'momo@gmail.com', "1234", "user"),
-  ('eric', 'eric@gmail.com', "1234", "user");
+  ('yvens', 'yv@gmail.com', "1234"),
+  ('Cédric', 'cedric@gmail.com', "1234"),
+  ('momo', 'momo@gmail.com', "1234"),
+  ('eric', 'eric@gmail.com', "1234");
 

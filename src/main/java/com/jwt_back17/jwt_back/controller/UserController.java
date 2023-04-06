@@ -2,6 +2,7 @@ package com.jwt_back17.jwt_back.controller;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jwt_back17.jwt_back.dto.LoginDto;
 import com.jwt_back17.jwt_back.dto.RegisterDto;
 import com.jwt_back17.jwt_back.entity.BlackListTokenEntity;
+import com.jwt_back17.jwt_back.entity.RoleEntity;
 import com.jwt_back17.jwt_back.entity.UserEntity;
 import com.jwt_back17.jwt_back.repository.BlackListTokenRepository;
 import com.jwt_back17.jwt_back.repository.UserRepository;
@@ -68,7 +70,7 @@ public class UserController {
     UserEntity newUser = new UserEntity();
     newUser.setUsername(user.getUsername());
     newUser.setEmail(user.getEmail());
-    newUser.setRole("USER");
+    // newUser.setRole("USER");
 
     newUser.setPassword(passwordEncoder.encode(user.getPassword()));
     // tokenGenerator est une classe custom crée pour encapsuler toutes les méthodes
@@ -140,5 +142,28 @@ public class UserController {
     return userRepository.findById(id).get();
   }
 
+  // DELETE_ONE_TO_MANY_ELEMENT
+  @PostMapping("deleteUserMany/{id}")
+  public ResponseEntity<?> deleteUserManyToMany(@PathVariable Long id) {
+    HashMap<String, String> map = new HashMap<String, String>();
+
+    Optional<UserEntity> optionalUser = userRepository.findById(id);
+    if (optionalUser.isPresent() == false) {
+      map.put("message", "user not found");
+    }
+
+    if (optionalUser.isPresent()) {
+      UserEntity user = optionalUser.get();
+      Set<RoleEntity> roles = user.getRoles();
+      String rolesList = "";
+      for (RoleEntity role : roles) {
+        rolesList += role.getRole() + ",";
+        role.getUsers().remove(user);
+      }
+      userRepository.delete(user);
+      map.put("message", "User with id: " + id + " and Roles: " + rolesList + " has been deleted");
+    }
+    return new ResponseEntity<>(map, HttpStatus.OK);
+  }
 
 }

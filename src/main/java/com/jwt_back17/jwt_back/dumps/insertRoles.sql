@@ -1,0 +1,7 @@
+-- DELETE_ONE_TO_MANY_ELEMENT
+INSERT INTO
+  role_entity(role)
+VALUES
+  ("USER"),
+  ("ADMIN"),
+  ("MAINTAINER");
