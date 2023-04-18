@@ -71,3 +71,27 @@ public class JwtFilter extends OncePerRequestFilter {
   }
 
 }
+
+
+// Création du token à l'inscription ou à la connexion
+  // On fait ça grâce à generateToken() dans la classe JwtGenerator
+  // Donc à faire après avoir confirmerla connexion ou l'inscription de l'utilisateur
+
+// L'utilisation du token à chaque requête 
+  // Grâce à la classe JwtFilter qui extend OncePerRequest
+// Comment activer la sécurité qui fait qu'on a besoin d'un token
+  // C'est dans la classe Classe Config.java 
+    /**    http.cors().and().csrf().disable()
+    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    .exceptionHandling()
+    .authenticationEntryPoint(jwtEntryPoint)
+    .and()
+    .authorizeRequests()
+    .antMatchers("/register", "/login", "/customlogout", "/deleteUserMany/**", "/user/**").permitAll() // Les url libre d'accès sans token
+    .anyRequest().authenticated();
+     */ 
+  // Dans la classe JwtEntryPoint qui permet de renvoyer un message sir l'utilisateur n'est pas authentifié (donc si il a pas de token)
+// Comment charger un user dans spring security c'est dans la classe CustomUserDetails
+  // À utiliser partout ou t'a besoin d'info conçernant l'utilisateur 
+// La méthode WebMvcConfigurer qui se trouve dans la classe Config.java permet de faire une liste de d'autorisation
+// De clients et de méthode qui peuvent invoquer le serveur 

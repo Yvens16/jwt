@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,11 +23,13 @@ import com.jwt_back17.jwt_back.entity.RoleEntity;
 import com.jwt_back17.jwt_back.entity.UserEntity;
 import com.jwt_back17.jwt_back.repository.BlackListTokenRepository;
 import com.jwt_back17.jwt_back.repository.UserRepository;
+import com.jwt_back17.security.DataBaseConfig;
 import com.jwt_back17.security.JwtFilter;
 import com.jwt_back17.security.JwtGenerator;
 
 @RestController
 public class UserController {
+
   @Autowired
   private JwtGenerator tokenGenerator;
 
@@ -44,10 +47,14 @@ public class UserController {
   @Autowired
   UserRepository userRepository;
 
+  @Autowired
+  DataBaseConfig dataConfig;
+
   @GetMapping("try")
   public ResponseEntity<?> getString() {
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("message", "hello");
+    System.out.println("@@@@@@@@@@@@@@@@@@@ " + dataConfig.getMyappSecretKey());
     return new ResponseEntity<>(map, HttpStatus.OK);
   }
 
@@ -71,8 +78,8 @@ public class UserController {
     newUser.setUsername(user.getUsername());
     newUser.setEmail(user.getEmail());
     // newUser.setRole("USER");
-
-    newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    String hashedPassword = passwordEncoder.encode(user.getPassword());
+    newUser.setPassword(hashedPassword);
     // tokenGenerator est une classe custom crée pour encapsuler toutes les méthodes
     // liées au JWT
     // On a du installer JJWT pour avoir accès à import io.jsonwebtoken
@@ -90,8 +97,9 @@ public class UserController {
 
   @PostMapping("login")
   public ResponseEntity<?> login(@RequestBody RegisterDto userAuth) {
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<String, String>(); // {}
     Optional<UserEntity> optionnalUser = userRepository.findByUsername(userAuth.getUsername());
+    // SELECT * FROM user where username = bf
     if (optionnalUser.isPresent()) {
       UserEntity user = optionnalUser.get();
       String normalPassword = userAuth.getPassword();
@@ -146,7 +154,7 @@ public class UserController {
   @PostMapping("deleteUserMany/{id}")
   public ResponseEntity<?> deleteUserManyToMany(@PathVariable Long id) {
     HashMap<String, String> map = new HashMap<String, String>();
-
+    userRepository.findById(id).get();
     Optional<UserEntity> optionalUser = userRepository.findById(id);
     if (optionalUser.isPresent() == false) {
       map.put("message", "user not found");
@@ -165,5 +173,4 @@ public class UserController {
     }
     return new ResponseEntity<>(map, HttpStatus.OK);
   }
-
 }

@@ -65,13 +65,14 @@ public class Config {
      * d'ou la ligne 60 sessionManagement(session ->
      * session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
      */
+    
     http.cors().and().csrf().disable()
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling()
         .authenticationEntryPoint(jwtEntryPoint)
         .and()
         .authorizeRequests()
-        .antMatchers("/register", "/login", "/customlogout", "/deleteUserMany/**", "/user/**").permitAll() // Les url libre d'accès sans token
+        .antMatchers("/register", "/login", "/customlogout", "/deleteUserMany/**", "/user/**", "/try").permitAll() // Les url libre d'accès sans token
         .anyRequest().authenticated();
 
     http.logout().logoutSuccessUrl("/logoutSuccessfully");

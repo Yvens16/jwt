@@ -48,8 +48,10 @@ public class JwtGenerator {
     UserDetails userDetails = customUserDetails.loadUserByUsername(username);
     Claims claims = Jwts.claims().setSubject(username);
     claims.put("role", userDetails.getAuthorities());
+    // Si tu veux ajouter d'autres éléments dans le token : claims.put("role", "element to add");
     Date currentDate = new Date();
-    // 30000 30 seconds en millliseconds
+    // 30000 = 30 seconds en millliseconds
+    // 30000000 = 8h en millliseconds
     Date expireDate = new Date(currentDate.getTime() + 30000000);
     // Implémentation à récupérer d'internet
     String token = Jwts.builder()
@@ -57,7 +59,7 @@ public class JwtGenerator {
         // .setSubject(username)
         .setIssuedAt(new Date())
         .setExpiration(expireDate)
-        .signWith(SignatureAlgorithm.HS512, "secret")
+        .signWith(SignatureAlgorithm.HS512, "secret") // le secret doit être une variable d'environnement parce que c'est secret justement ahah
         .compact();
     return token;
   }
